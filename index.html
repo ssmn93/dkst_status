@@ -108,12 +108,20 @@
       let status = 0; //0:平常 1:ダウン観測 2:手動ダウン 3:手動 4:取得不可
       const overrideText = "";
       const overrideStatus = 0; //0:平常◯ 1:一部不具合△ 2:不具合× 3:ステータスなし-
-      
+
       let status_main_picture = document.getElementById("status_main_picture");
       let status_main_text = document.getElementById("status_main_text");
       let status_main_detail_text = document.getElementById("status_main_detail_text");
-      
+
+      function renderLoading() {
+          status_main_picture.style.display = "none"; // 結果が出るまで画像は非表示
+          status_main_text.textContent = "取得中...";
+          status_main_detail_text.textContent = "";
+      }
+
       function renderStatus() {
+          status_main_picture.style.display = ""; // 画像を表示状態に戻す
+
           if (status == 0) {
               status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
               status_main_text.textContent = "平常運転";
@@ -147,24 +155,32 @@
               status_main_detail_text.textContent = "ステータスの取得に問題が発生しました。";
           }
       }
-      
+
       if (status !== 3) {
-          fetch('https://dks.net')
-              .then(response => {
-                  console.log(response.status);
-                  if (response.ok) {
-                      status = 0;
-                  } else {
-                      if (status == 2) status = 2;
-                      else status = 1;
-                  }
-                  renderStatus();
-              })
-              .catch(error => {
-                  console.error('通信エラー。こちらをご覧いただけている場合は、以下のエラーコードを運営にご連絡ください:', error);
-                  status = 4;
-                  renderStatus();
-              });
+          renderLoading(); // フェッチ開始前に「取得中」を即座に表示
+
+          try {
+              fetch('https://dks.net')
+                  .then(response => {
+                      console.log(response.status);
+                      if (response.ok) {
+                          status = 0;
+                      } else {
+                          if (status == 2) status = 2;
+                          else status = 1;
+                      }
+                      renderStatus();
+                  })
+                  .catch(error => {
+                      console.error('通信エラー。こちらをご覧いただけている場合は、以下のエラーコードを運営にご連絡ください:', error);
+                      status = 4;
+                      renderStatus();
+                  });
+          } catch (error) {
+              console.error('fetch呼び出しエラー:', error);
+              status = 4;
+              renderStatus();
+          }
       } else {
           renderStatus();
       }
