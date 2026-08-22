@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="google-site-verification" content="-G4Xg-6chW_5D3zmvbLHM6_5sy0fGJALsZ4qaY6tO3Y" />
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:description" content="「どこでもステーションベル」のステータス情報を掲載しています！">
+  <link rel="icon" href="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/c923.png" />
+  <link rel="stylesheet" href="style.css">
+  <meta property="og:image" content="https://github.com/ssmn93/depart-melody/blob/main/picture/ad.png?raw=true">
+  <meta property="og:description" content="「どこでもステーションベル」のステータス情報を掲載しています！">
+  <meta property="og:title" content="ステータス情報｜どこでもステーションベル">
+  <meta property="og:url" content="https://status.dkst.net">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:site_name" content="ステータス情報｜どこでもステーションベル">
+  <title>ステータス情報｜どこでもステーションベル</title>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <a href="https://status.dkst.net/" class="title-link">
+        <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/c923.png" alt="アイコン" class="logo">
+        <h1 class="title">どこでもステーションベル</h1>
+      </a>
+    </div>
+  </header>
+    <div class="background-image">
+      <div class="content">
+        <h1>ステータス情報</h1>
+      </div>
+    </div>
+    <div class="main">
+      <h1>ステータス情報</h1>
+      <table>
+        <tr>
+            <th>種別</th>
+            <th>ステータス</th>
+            <th>詳細</th>
+        </tr>
+        <tr>
+            <td>webサイト</td>
+            <td id="status_main">
+                <img id="status_main_picture">
+                <p id="status_main_text"></p>
+            </td>
+            <td id="status_main_detail">
+                <p id="status_main_detail_text"></p>
+            </td>
+        </tr>
+        <tr>
+            <td>音声</td>
+            <td>
+                <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png">
+                <p>平常運転</p>
+            </td>
+            <td>
+                <p></p>
+            </td>
+        </tr>
+        <tr>
+            <td>その他デザイン</td>
+            <td>
+                <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/triangle.png">
+                <p>一部不具合</p>
+            </td>
+            <td>
+                <p>旧実行環境「Glitch」のサービス終了に伴い、保存していた一部画像が削除されました。2025年6月頃までに追加されたホームについて、駅名標等が現在等もご利用いただけません。再開の見込みは立っておりません。</p>
+            </td>
+        </tr>
+      </table>
+      <h1>その他サービスの情報</h1>
+      <table>
+        <tr>
+          <th>サービス名</th>
+          <th>ステータス確認ページ</th>
+        </tr>
+        <tr>
+          <td>
+            <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/github.png">
+            <p>GitHub</p>
+          </td>
+          <td>
+            <a href="https://www.githubstatus.com/">GitHub Status</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <!-- <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/onamaecom.png"> -->
+            <p>お名前.com</p>
+          </td>
+          <td>
+            <a href="https://www.onamae.com/news/info/">お名前.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cloudflare.png">
+            <p>CloudFlare</p>
+          </td>
+          <td>
+            <a href="https://www.cloudflarestatus.com/">CloudFlare Status</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <script>
+      let status = 0; //0:平常 1:ダウン観測 2:手動ダウン 3:手動 4:取得不可
+      const overrideText = "";
+      const overrideStatus = 0; //0:平常◯ 1:一部不具合△ 2:不具合× 3:ステータスなし-
+
+      let status_main_picture = document.getElementById("status_main_picture");
+      let status_main_text = document.getElementById("status_main_text");
+      let status_main_detail_text = document.getElementById("status_main_detail_text");
+
+      if (status !== 3) {
+        fetch('https://dkst.net')
+            .then(response => {
+                console.log(response.status);
+                if (response.ok) {
+                    status = 0;
+                } else {
+                    if (status == 2) status = 2;
+                    else status = 1;
+                }
+            })
+            .catch(error => {
+                console.error('通信エラー。こちらをご覧いただけている場合は、以下のエラーコードを運営にご連絡ください:', error);
+                status = 4;
+            });
+        }
+
+        if (status == 0) {
+            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
+            status_main_text.textContent = "平常運転";
+            status_main_detail_text.textContent = "平常通り運転しています。";
+        } else if (status == 1) {
+            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png"
+            status_main_text.textContent = "不具合検出";
+            status_main_detail_text.textContent = "不具合を検出しました。詳しい情報は公式からの発表をお待ちください。";
+        } else if (status == 2) {
+            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png"
+            status_main_text.textContent = "不具合確認";
+            status_main_detail_text.textContent = overrideText;
+        } else if (status == 3) {
+            if (overrideStatus == 0) {
+                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
+                status_main_text.textContent = "平常運転";
+            } else if (overrideStatus == 1) {
+                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/triangle.png";
+                status_main_text.textContent = "一部不具合";
+            } else if (overrideStatus == 2) {
+                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png";
+                status_main_text.textContent = "不具合確認";
+            } else if (overrideStatus == 3) {
+                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/bar.png";
+                status_main_text.textContent = "ステータスなし";
+            }
+            status_main_detail_text.textContent = overrideText;
+        } else if (status == 4) {
+            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/bar.png";
+            status_main_text.textContent = "ステータスなし";
+            status_main_detail_text.textContent = "ステータスの取得に問題が発生しました。";
+        }
+    </script>
+  <footer class="footer">
+    <div class="md-flex md-justify-between">
+      <a href="https://dkst.net" style="text-decoration:none;" class="footer__logo">
+        <img src="https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/e233yo.png" width="40" height="40" alt=" Logo" />
+        <p class="title">どこでもステーションベル</p>
+      </a>
+      <ul class="footer__navi flex">
+        <li><a href="https://dkst.net">ホーム</a></li>
+        <li><a href="https://dkst.net/search.html">検索</a></li>
+        <li><a href="https://dkst.net/thanks.html">提供者一覧・二次利用</a></li>
+        <li><a href="https://dkst.net/support.html">問い合わせ</a></li>
+        <li><a href="https://dkst.net/ikst/ikst.html">IKST動静</a></li>
+        <li><a href="https://dkst.net/custom.html">カスタムステーションベル</a></li>
+        <li><a href="https://dkst.net/locate.html">ここからステーションベル</a></li>
+        <li><a href="https://status.dkst.net">ステータス</a></li>
+      </ul>
+    </div>
+    <hr />
+    <p class="copyright">
+      このページは、<a href="https://www.cloudflare.com/">CloudFlare</a>により通常ページから独立してホスティングされています。
+    </p>
+  </footer>
+</body>
+</html>
