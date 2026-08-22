@@ -157,18 +157,12 @@
       }
 
       if (status !== 3) {
-          renderLoading(); // フェッチ開始前に「取得中」を即座に表示
-
+          renderLoading();
+      
           try {
-              fetch('https://dkst.net/')
-                  .then(response => {
-                      console.log(response.status);
-                      if (response.ok) {
-                          status = 0;
-                      } else {
-                          if (status == 2) status = 2;
-                          else status = 1;
-                      }
+              fetch('https://dkst.net/', { mode: 'no-cors' })
+                  .then(() => {
+                      status = 0;
                       renderStatus();
                   })
                   .catch(error => {
