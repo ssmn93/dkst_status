@@ -108,60 +108,66 @@
       let status = 0; //0:平常 1:ダウン観測 2:手動ダウン 3:手動 4:取得不可
       const overrideText = "";
       const overrideStatus = 0; //0:平常◯ 1:一部不具合△ 2:不具合× 3:ステータスなし-
-
+      
       let status_main_picture = document.getElementById("status_main_picture");
       let status_main_text = document.getElementById("status_main_text");
       let status_main_detail_text = document.getElementById("status_main_detail_text");
-
+      
+      function renderStatus() {
+          if (status == 0) {
+              status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
+              status_main_text.textContent = "平常運転";
+              status_main_detail_text.textContent = "";
+          } else if (status == 1) {
+              status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png"
+              status_main_text.textContent = "不具合検出";
+              status_main_detail_text.textContent = "不具合を検出しました。詳しい情報は公式からの発表をお待ちください。";
+          } else if (status == 2) {
+              status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png"
+              status_main_text.textContent = "不具合確認";
+              status_main_detail_text.textContent = overrideText;
+          } else if (status == 3) {
+              if (overrideStatus == 0) {
+                  status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
+                  status_main_text.textContent = "平常運転";
+              } else if (overrideStatus == 1) {
+                  status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/triangle.png";
+                  status_main_text.textContent = "一部不具合";
+              } else if (overrideStatus == 2) {
+                  status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png";
+                  status_main_text.textContent = "不具合確認";
+              } else if (overrideStatus == 3) {
+                  status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/bar.png";
+                  status_main_text.textContent = "ステータスなし";
+              }
+              status_main_detail_text.textContent = overrideText;
+          } else if (status == 4) {
+              status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/bar.png";
+              status_main_text.textContent = "ステータスなし";
+              status_main_detail_text.textContent = "ステータスの取得に問題が発生しました。";
+          }
+      }
+      
       if (status !== 3) {
-        fetch('https://dkst.net')
-            .then(response => {
-                console.log(response.status);
-                if (response.ok) {
-                    status = 0;
-                } else {
-                    if (status == 2) status = 2;
-                    else status = 1;
-                }
-            })
-            .catch(error => {
-                console.error('通信エラー。こちらをご覧いただけている場合は、以下のエラーコードを運営にご連絡ください:', error);
-                status = 4;
-            });
-        }
-
-        if (status == 0) {
-            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
-            status_main_text.textContent = "平常運転";
-            status_main_detail_text.textContent = "";
-        } else if (status == 1) {
-            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png"
-            status_main_text.textContent = "不具合検出";
-            status_main_detail_text.textContent = "不具合を検出しました。詳しい情報は公式からの発表をお待ちください。";
-        } else if (status == 2) {
-            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png"
-            status_main_text.textContent = "不具合確認";
-            status_main_detail_text.textContent = overrideText;
-        } else if (status == 3) {
-            if (overrideStatus == 0) {
-                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/circle.png";
-                status_main_text.textContent = "平常運転";
-            } else if (overrideStatus == 1) {
-                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/triangle.png";
-                status_main_text.textContent = "一部不具合";
-            } else if (overrideStatus == 2) {
-                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/cross.png";
-                status_main_text.textContent = "不具合確認";
-            } else if (overrideStatus == 3) {
-                status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/bar.png";
-                status_main_text.textContent = "ステータスなし";
-            }
-            status_main_detail_text.textContent = overrideText;
-        } else if (status == 4) {
-            status_main_picture.src = "https://raw.githubusercontent.com/ssmn93/depart-melody/main/picture/bar.png";
-            status_main_text.textContent = "ステータスなし";
-            status_main_detail_text.textContent = "ステータスの取得に問題が発生しました。";
-        }
+          fetch('https://dks.net')
+              .then(response => {
+                  console.log(response.status);
+                  if (response.ok) {
+                      status = 0;
+                  } else {
+                      if (status == 2) status = 2;
+                      else status = 1;
+                  }
+                  renderStatus();
+              })
+              .catch(error => {
+                  console.error('通信エラー。こちらをご覧いただけている場合は、以下のエラーコードを運営にご連絡ください:', error);
+                  status = 4;
+                  renderStatus();
+              });
+      } else {
+          renderStatus();
+      }
     </script>
   <footer class="footer">
     <div class="md-flex md-justify-between">
